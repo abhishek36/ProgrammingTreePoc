@@ -1,0 +1,103 @@
+module.exports = {
+  add: (schema, data) => {
+    return new Promise(function (resolve, reject) {
+      var addSchema = new schema(data);
+      addSchema
+        .save()
+        .then((resData) => {
+          resolve(resData);
+        })
+        .catch((error) => {
+          console.log("error : ", error);
+          reject(error);
+        });
+    });
+  },
+  getAll: (schema) => {
+    return new Promise(function (resolve, reject) {
+      schema
+        .find({
+          status: {
+            $ne: "deleted"
+          }
+        })
+        .then((resData) => {
+          resolve(resData);
+        })
+        .catch((error) => {
+          console.log("error :", error);
+          reject(error);
+        });
+    });
+  },
+  getBy: (schema, object) => {
+    return new Promise(function (resolve, reject) {
+      schema
+        .find({
+          ...object,
+          status: {
+            $ne: "deleted"
+          }
+        })
+        .then((resData) => {
+          resolve(resData);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  },
+  getOne: (schema, object) => {
+    return new Promise(function (resolve, reject) {
+      schema
+        .findOne({
+          ...object,
+          status: {
+            $ne: "deleted"
+          }
+        })
+        .then((resData) => {
+          resolve(resData);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  },
+  updateBy: (schema, id, data) => {
+    return new Promise(function (resolve, reject) {
+      schema
+        .findByIdAndUpdate({
+          _id: id
+        }, data, {
+          $new: true
+        })
+        .then((resData) => {
+          resolve(resData);
+        })
+        .catch((error) => {
+          console.log("error", error);
+          reject(error);
+        });
+    });
+  },
+  delete: (schema, id) => {
+    return new Promise(function (resolve, reject) {
+      schema
+        .findByIdAndUpdate({
+          _id: id
+        }, {
+          status: "deleted"
+        }, {
+          $new: true
+        })
+        .then((resData) => {
+          resolve(resData);
+        })
+        .catch((error) => {
+          console.log("error : ", error);
+          reject(error);
+        });
+    });
+  },
+};
