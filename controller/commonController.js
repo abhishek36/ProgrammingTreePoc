@@ -64,10 +64,26 @@ module.exports = {
         });
     });
   },
+  updateByObject: (schema, object, data) => {
+    return new Promise(function (resolve, reject) {
+      schema
+        .findOneAndUpdate(
+          object, data, {
+          $new: true
+        })
+        .then((resData) => {
+          resolve(resData);
+        })
+        .catch((error) => {
+          console.log("error", error);
+          reject(error);
+        });
+    });
+  },
   updateBy: (schema, id, data) => {
     return new Promise(function (resolve, reject) {
       schema
-        .findByIdAndUpdate({
+        .findOneAndUpdate({
           _id: id
         }, data, {
           $new: true
@@ -87,6 +103,25 @@ module.exports = {
         .findByIdAndUpdate({
           _id: id
         }, {
+          status: "deleted"
+        }, {
+          $new: true
+        })
+        .then((resData) => {
+          resolve(resData);
+        })
+        .catch((error) => {
+          console.log("error : ", error);
+          reject(error);
+        });
+    });
+  },
+  deleteByObject: (schema, object) => {
+    return new Promise(function (resolve, reject) {
+      schema
+        .findOneAndUpdate(
+          object
+          , {
           status: "deleted"
         }, {
           $new: true

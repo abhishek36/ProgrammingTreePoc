@@ -4,8 +4,6 @@ const response = require("../helper/response")
 const MESSAGE = require("../helper/message")
 const mongoose = require("mongoose")
 const User = mongoose.model("User")
-const Address = mongoose.model("Address")
-const Document = mongoose.model("Document")
 
 //add user
 router.post("/user", async (req, res) => {
@@ -18,26 +16,6 @@ router.post("/user", async (req, res) => {
         response.successResponse(res, 200, responseObj)
     } catch (error) {
         response.successResponse(res, 400, MESSAGE.USER_REGISTER_FAIL)
-    }
-})
-
-//add address
-router.post("/address", async (req, res) => {
-    try {
-        const result = await commonController.add(Address, req.body)
-        response.successResponse(res, 200, MESSAGE.ADDRESS_CREATED + result._id)
-    } catch (error) {
-        response.successResponse(res, 400, MESSAGE.FAIL_TO_CREATE_ADDRESS)
-    }
-})
-
-//add document
-router.post("/document", async (req, res) => {
-    try {
-        const result = await commonController.add(Document, req.body)
-        response.successResponse(res, 200, MESSAGE.DOCUMENT_CREATED + result._id)
-    } catch (error) {
-        response.successResponse(res, 400, MESSAGE.FAIL_TO_CREATE_DOCUMENT)
     }
 })
 
@@ -109,4 +87,46 @@ router.get("/form/:id", async (req, res) => {
     }
 })
 
+//get user list
+router.get("/user/list", async (req, res) => {
+    try {
+        var {
+            page = 1,
+                limit = 10
+        } = req.query;
+        const result = await User.find({status : {$ne : "deleted"}}).limit(limit * 1).skip((page - 1) * limit)
+        response.successResponse(res, 200, result)
+    } catch (error) {
+        response.successResponse(res, 400, MESSAGE.UNABLE_TO_FETCH_RECORD)
+    }
+})
+
+//get user by id
+router.get("/user/:id", async (req, res) => {
+    try {
+        const id = req.params.id
+        const result = await commonController.getOne(User , {_id :id})
+        response.successResponse(res, 200, result)
+    } catch (error) {
+        response.successResponse(res, 400, MESSAGE.UNABLE_TO_FETCH_RECORD)
+    }
+})
+//update user
+router.put("/user/update/:id", async (req, res) => {
+    try {
+        const result = await commonController.updateBy(User , req.params.id , req.body)
+        response.successResponse(res, 200, MESSAGE.UPDATE_USER)
+    } catch (error) {
+        response.successResponse(res, 400, MESSAGE.FAIL_TO_UPDATE_USER)
+    }
+})
+//delete user
+router.delete("/user/delete/:id", async (req, res) => {
+    try {
+        const result = await commonController.delete(User , req.params.id)
+        response.successResponse(res, 200, MESSAGE.USER_DELETED)
+    } catch (error) {
+        response.successResponse(res, 400, MESSAGE.FAIL_TO_USER_DELETED)
+    }
+})
 module.exports = router
