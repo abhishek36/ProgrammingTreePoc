@@ -120,7 +120,7 @@ module.exports = {
     return new Promise(function (resolve, reject) {
       schema
         .findOneAndUpdate(
-          object
+          ...object
           , {
           status: "deleted"
         }, {

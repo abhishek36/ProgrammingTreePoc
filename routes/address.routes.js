@@ -28,7 +28,8 @@ router.get("/:id", async (req, res) => {
 //update address
 router.put("/update/:id", async (req, res) => {
     try {
-        const result = await commonController.updateByObject(Address , {userId : req.params.id} , req.body)
+        const userId= req.params.id
+        const result = await Address.findOneAndUpdate({userId : userId} , req.body)
         response.successResponse(res, 200, MESSAGE.UPDATE_DELETED)
     } catch (error) {
         console.log("error" ,error)
@@ -39,7 +40,7 @@ router.put("/update/:id", async (req, res) => {
 router.delete("/delete/:id", async (req, res) => {
     try {
         const userId = req.params.id
-        const result = await commonController.deleteByObject(Address ,{userId : userId})
+        const result = await Address.findOneAndUpdate({userId : userId} ,{status : "deleted"})
         response.successResponse(res, 200, MESSAGE.ADDRESS_DELETED)
     } catch (error) {
         response.successResponse(res, 400, MESSAGE.FAIL_TO_DELETE_ADDRESS)

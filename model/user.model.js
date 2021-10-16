@@ -7,6 +7,7 @@ const User = new Schema({
     lastName: String,
     mobile: String,
     dob: String,
+    age: Number,
     gender: {
         type: String,
         enum: ["Male", "Female", "Others"]

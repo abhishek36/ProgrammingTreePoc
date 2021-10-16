@@ -14,6 +14,10 @@ const Address = new Schema({
         street: String,
         pincode: Number,
     },
+    sameAddress : {
+        type : Boolean,
+        default : false
+    },
     permanentAddress: {
         address: String,
         state: String,

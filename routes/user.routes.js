@@ -4,6 +4,8 @@ const response = require("../helper/response")
 const MESSAGE = require("../helper/message")
 const mongoose = require("mongoose")
 const User = mongoose.model("User")
+const Address = mongoose.model("Address")
+const Document = mongoose.model("Document")
 
 //add user
 router.post("/user", async (req, res) => {
@@ -94,7 +96,7 @@ router.get("/user/list", async (req, res) => {
             page = 1,
                 limit = 10
         } = req.query;
-        const result = await User.find({status : {$ne : "deleted"}}).limit(limit * 1).skip((page - 1) * limit)
+        const result = await User.find({status : {$ne : "deleted"}}).limit(limit * 1).skip((page - 1) * limit).sort({_id : -1})
         response.successResponse(res, 200, result)
     } catch (error) {
         response.successResponse(res, 400, MESSAGE.UNABLE_TO_FETCH_RECORD)
@@ -123,7 +125,10 @@ router.put("/user/update/:id", async (req, res) => {
 //delete user
 router.delete("/user/delete/:id", async (req, res) => {
     try {
-        const result = await commonController.delete(User , req.params.id)
+        const userId = req.params.id
+        const userDelete = await commonController.delete(User , userId)
+        const addressDelete = await Address.findOneAndUpdate({userId : userId} ,{status : "deleted"})
+        const documentDelete = await Document.findOneAndUpdate({userId : userId} ,{status : "deleted"})
         response.successResponse(res, 200, MESSAGE.USER_DELETED)
     } catch (error) {
         response.successResponse(res, 400, MESSAGE.FAIL_TO_USER_DELETED)
